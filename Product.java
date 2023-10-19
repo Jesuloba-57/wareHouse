@@ -51,6 +51,9 @@ public class Product implements Serializable {
     public Iterator getWaitlist(){
         return waitlist.getItems();
     }
+    public boolean isEmpty(){
+        return waitlist.isEmpty();
+    }
 
     public String toString() {
         return "Product Name: " + ProductName + " Id: " + id + " Quantity " + Quantity;

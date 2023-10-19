@@ -395,6 +395,9 @@ public class UserInterface {
         String name = getToken("Enter Member Name: ");
         Member member = warehouse.findMemberByName(name);
         Iterator allItems = warehouse.getWishlist(member);
+        if (member.isEmpty()){
+            System.out.println("WishList is Empty");
+        }
         while (allItems.hasNext()) {
             Record record = (Record) allItems.next();
             System.out.println(record.toString());
@@ -567,7 +570,7 @@ public class UserInterface {
         String name = getToken("Enter Shipment Product Name: ");
         Product product = warehouse.findProductByName(name);
         int quantity = getNumber("Enter quantity of Product: ");
-        if (product != null){
+        if (product != null && !product.isEmpty()){
             Shipment ship = new Shipment(product, quantity);
             System.out.println(ship.toString());
             Iterator waitIter = warehouse.getWaitlist(product);
@@ -626,7 +629,7 @@ public class UserInterface {
             }
         }
         else{
-            System.out.println("Product not found in Inventory!");
+            System.out.println("Waitlist is Currently Empty");
         }
     }
 

@@ -128,6 +128,9 @@ public class Warehouse implements Serializable{
         return member.getWish();
     }
 
+    public boolean wishListIsempty(Member member){
+        return member.isEmpty();
+    }
 
     public int addToInvoices(Record wish, Member member) {
         Product p = wish.getProduct();

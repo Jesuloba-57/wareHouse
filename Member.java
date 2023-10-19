@@ -54,6 +54,10 @@ public class Member implements Serializable{
         return wishlist.getWishlist();
     }
 
+    public boolean isEmpty(){
+        return wishlist.isEmpty();
+    }
+
     public void setName(String newName) {
         name = newName;
     }

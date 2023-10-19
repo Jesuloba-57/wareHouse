@@ -4,6 +4,7 @@ public class Waitlist implements Serializable {
 
     //private List<Item> items;
     private List items = new LinkedList();
+    private informationList copyList = new informationList(items);
 
     private static Waitlist waitList;
 
@@ -37,13 +38,9 @@ public class Waitlist implements Serializable {
         return removed;
     }
 
-
-
     public Iterator getItems(){
-        return items.iterator();
+        return copyList.getList();
     }
-
-
 
     public boolean isProductOnWaitlist(Item i) {
         return items.contains(i);
@@ -52,6 +49,10 @@ public class Waitlist implements Serializable {
     public void clearWaitlist() {
         items.clear();
     }
+    public boolean isEmpty(){
+        return items.isEmpty();
+    }
+
 //    private static final long serialVersionUID = 1L;
 //    private List wait = new LinkedList();
 //    private static Waitlist waitlist;

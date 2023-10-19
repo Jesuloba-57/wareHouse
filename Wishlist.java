@@ -1,15 +1,8 @@
 import java.util.*;
 import java.io.*;
 public class Wishlist implements Serializable {
-
-    //private List<Item> items;
-    private List items = new LinkedList();
-
+    private List wishes = new LinkedList();
     private static Wishlist wishlist;
-
-//    public Waitlist() {
-//        items = new ArrayList<>();
-//    }
 
     public static Wishlist instance() {
         if (wishlist == null) {
@@ -20,7 +13,7 @@ public class Wishlist implements Serializable {
     }
 
     public boolean addToWishlist(Record item) {
-        items.add(item);
+        wishes.add(item);
         return true;
     }
 
@@ -29,17 +22,17 @@ public class Wishlist implements Serializable {
         return true;
     }*/
 
-    public boolean removeFromWishlist(Record item) {
-        System.out.println("Items before removal: " + items);
-        System.out.println("Item that is trying to be removed: " + item);
-        boolean removed = items.remove(item);
+    public boolean removeFromWishlist(Record wish) {
+        System.out.println("Items before removal: " + wishes);
+        System.out.println("Item that is trying to be removed: " + wish);
+        boolean removed = wishes.remove(wish);
         System.out.println("Item removed: " + removed);
         return removed;
     }
 
 
     public Iterator getWishlist() {
-        return items.iterator();
+        return wishes.iterator();
     }
 
 

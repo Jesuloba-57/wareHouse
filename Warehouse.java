@@ -15,17 +15,17 @@ public class Warehouse implements Serializable{
     public static final int NO_SUCH_MEMBER = 9;
     private Catalog catalog;
     private MemberList memberList;
-    private Waitlist waitList;
-    private Wishlist wishlist;
-    private InvoiceList invoiceList;
+    //private Waitlist waitList;
+    //private Wishlist wishlist;
+    //private InvoiceList invoiceList;
 
     private static Warehouse warehouse;
     private Warehouse(){
         catalog = Catalog.instance();
         memberList = MemberList.instance();
-        waitList = Waitlist.instance();
-        wishlist = Wishlist.instance();
-        invoiceList = InvoiceList.instance();
+        //waitList = Waitlist.instance();
+        //wishlist = Wishlist.instance();
+        //invoiceList = InvoiceList.instance();
     }
     public static Warehouse instance() {
         if (warehouse == null) {
@@ -63,17 +63,7 @@ public class Warehouse implements Serializable{
     }
 
     public Member findMemberByName(String memberName) {
-        Iterator memberIterator = memberList.getMembers();
-
-        while (memberIterator.hasNext()) {
-
-            Member member = (Member) memberIterator.next();
-            System.out.println(member.getName());
-            if (member.getName().equalsIgnoreCase(memberName)) {
-                return member;
-            }
-        }
-        return null; // Member not found
+        return memberList.findMember(memberName);
     }
 
 
@@ -112,42 +102,51 @@ public class Warehouse implements Serializable{
         return catalog.changeProductQuantity(productName, newQuantity);
     }
 
-    public Item addItem(Product product, Member member, int quantity){
+    public Item addWaitItem(Product product, Member member, int quantity){
         Item item = new Item(product, member, quantity);
-        if (waitList.addToWaitlist(item)){
+        if (product.addWait(item)){
             return (item);
         }
         return null;
     }
 
-    public boolean removeItem(Item item){
-        return waitList.removeFromWaitlist(item);
-
+    public boolean removeWaitItem(Item item, Product product){
+        return product.removeWait(item);
     }
 
-    public boolean addToWishlist(Record record) {
-        return wishlist.addToWishlist(record);
+    public boolean addToWishlist(Member member, Record record) {
+        return member.addwish(record);
     }
 
-    public boolean removeFromWishlist(Record record) {
-        return wishlist.removeFromWishlist(record);
+    public boolean removeFromWishlist(Member member, Record record) {
+        return member.removeWish(record);
     }
 
-    public Iterator getWishlist() {
-        return wishlist.getWishlist();
+    public Iterator getWishlist(Member member) {
+        return member.getWish();
     }
 
 
-    public boolean addToInvoices(Invoice invoice) {
-        return invoiceList.addToInvoices(invoice);
+    public int addToInvoices(Record wish, Member member) {
+        Product p = wish.getProduct();
+        if(p.getQuantity() >= wish.getQuantity()){
+            member.addtoInvoice(wish);
+            return 0;
+        }
+        else{
+            int quantity = p.getQuantity() - wish.getQuantity();
+            Item wait = new Item(p, member, quantity);
+            p.addWait(wait);
+            return 1;
+        }
     }
 
-    public boolean removeFromInvoices(Invoice invoice) {
-        return invoiceList.removeFromInvoices(invoice);
-    }
+//    public boolean removeFromInvoices(Item item, Member member) {
+//        return member.removeFromInvoice(item);
+//    }
 
-    public Iterator getInvoices() {
-        return invoiceList.getInvoices();
+    public Iterator getInvoices(Member member) {
+        return member.getInvoice();
     }
 
     public Iterator getProducts() { return catalog.getProducts();}
@@ -155,12 +154,15 @@ public class Warehouse implements Serializable{
     public Iterator getMembers() {
         return memberList.getMembers();
     }
-    public Iterator getWaitlist(){
-        return waitList.getItems();
+    public Iterator getWaitlist(Product product){
+        return product.getWaitlist();
     }
 
     public static Warehouse retrieve() {
         try {
+//            Scanner keyboard = new Scanner(System.in);
+//            System.out.println("filename");
+//            String filename = keyboard.next();
             FileInputStream file = new FileInputStream("WarehouseData");
             ObjectInputStream input = new ObjectInputStream(file);
             input.readObject();

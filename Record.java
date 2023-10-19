@@ -1,6 +1,7 @@
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Record {
+public class Record implements Serializable {
     private Product product;
     private Member member;
     private int quantity;

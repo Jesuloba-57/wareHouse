@@ -2,11 +2,11 @@ import java.util.*;
 import java.io.*;
 
 public class InvoiceList implements Serializable {
-    private List<Invoice> invoices = new LinkedList();
+    private List<Record> invoices = new LinkedList();
     private static InvoiceList invoiceList;
 
-    private InvoiceList() {
-    }
+//    private InvoiceList() {
+//    }
 
     public static InvoiceList instance() {
         if (invoiceList == null) {
@@ -16,13 +16,13 @@ public class InvoiceList implements Serializable {
         }
     }
 
-    public boolean addToInvoices(Invoice invoice) {
-        invoices.add(invoice);
+    public boolean addToInvoices(Record rec) {
+        invoices.add(rec);
         return true;
     }
 
-    public boolean removeFromInvoices(Invoice invoice) {
-        boolean removed = invoices.remove(invoice);
+    public boolean removeFromInvoices(Record rec) {
+        boolean removed = invoices.remove(rec);
         return removed;
     }
 

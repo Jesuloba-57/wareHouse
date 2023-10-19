@@ -22,6 +22,9 @@ public class Item {
     public int getQuantity() {
         return quantity;
     }
+    public void setQuantity(int x){
+        quantity = x;
+    }
 
     @Override
     public boolean equals(Object obj) {

@@ -19,7 +19,7 @@ public class UserInterface {
     private static final int PROCESS_WAITLIST = 8;
     private static final int ADD_TO_WISHLIST = 9;
     private static final int REMOVE_FROM_WISHLIST = 10;
-    private static final int GET_TRANSACTIONS = 11;
+    private static final int PROCESS_SHIPMENT = 11;
     private static final int SHOW_MEMBERS = 12;
     private static final int SHOW_PRODUCTS = 13;
     private static final int SHOW_ITEMS = 14;
@@ -106,7 +106,7 @@ public class UserInterface {
         System.out.println(EXIT + " to Exit\n");
         System.out.println(ADD_MEMBER + " to add a member");
         System.out.println(ADD_PRODUCTS + " to  add products");
-        System.out.println(PURCHASE_PRODUCTS + " to  issue products to a member");
+        System.out.println(PURCHASE_PRODUCTS + " to  Process Client Order");
         System.out.println(CHANGE_PRODUCT_QUANTITY + " to  change products quantity ");
         System.out.println(REMOVE_PRODUCT + " to  remove products ");
         System.out.println(PLACE_ON_WAITLIST + " to place products on waitlist");
@@ -114,7 +114,7 @@ public class UserInterface {
         System.out.println(ADD_TO_WISHLIST + " to add products to wishlist");
         System.out.println(REMOVE_FROM_WISHLIST + "to remove products from wishlist");
         System.out.println(PROCESS_WAITLIST + " to process waitlist");
-        System.out.println(GET_TRANSACTIONS + " to  print transactions");
+        System.out.println(PROCESS_SHIPMENT + " to  print transactions");
         System.out.println(SHOW_MEMBERS + " to  print members");
         System.out.println(SHOW_PRODUCTS + " to  print products");
         System.out.println(SHOW_ITEMS + " to print waitlist items");
@@ -162,20 +162,17 @@ public class UserInterface {
 
     public void placeOnWaitlist() {
         Item result;
-
         Scanner myObj = new Scanner(System.in);
         do {
-            String ProductName = getToken("Enter  ProductName");
-            System.out.println("Enter Quantity");
+            String ProductName = getToken("Enter  ProductName: ");
+            System.out.println("Enter Quantity: ");
 
             int Quantity = myObj.nextInt();
-            String name = getToken("Enter name");
-
+            String name = getToken("Enter Member name: ");
             Product product = warehouse.findProductByName(ProductName);
             Member member = warehouse.findMemberByName(name);
 
-
-            result = warehouse.addItem(product, member, Quantity);
+            result = warehouse.addWaitItem(product, member, Quantity);
             if (result != null) {
                 System.out.println(result);
             } else {
@@ -200,18 +197,139 @@ public class UserInterface {
         }
     }
 
-    public void purchaseProducts() {
-        System.out.println("Dummy Action");
+    public void processOrder() {
+        String Name = getToken("Enter Client Name: ");
+        Member member = warehouse.findMemberByName(Name);
+        Iterator wishIter = warehouse.getWishlist(member);
+
+        System.out.println("Your processing Options:");
+        System.out.println("1. Add item to Invoice");
+        System.out.println("2. Remove item from wishlist");
+        System.out.println("3. Change item quantity and add to Invoice");
+
+        while (wishIter.hasNext()) {
+            Record wish = (Record)(wishIter.next());
+            System.out.println(wish.toString());
+            int choice = getNumber("Enter your choice:");
+            switch (choice) {
+                case 1:
+                    int success = warehouse.addToInvoices(wish, member);
+                    if (success == 0) {
+                        System.out.println("Item Added");
+                    } else if (success == 1) {
+                        System.out.println("Item Added to Waitlist");
+                    } else {
+                        System.out.println("Unexpected Input");
+                    }
+
+                case 2:
+                    if (member != null) {
+                        Record record = new Record(wish.getProduct(), member, wish.getQuantity());
+                        boolean removed = warehouse.removeFromWishlist(member, record);
+                        if (removed) {
+                            System.out.println("Item removed from the wishlist.");
+                        } else {
+                            System.out.println("Item was not found on the wishlist.");
+                        }
+                    } else {
+                        System.out.println("Product or member not found.");
+                    }
+                    break;
+
+                case 3:
+                    if (member != null) {
+                        int newQuantity = getNumber("Enter the new quantity:");
+                        wish.setQuantity(newQuantity);
+                        int done = warehouse.addToInvoices(wish, member);
+                        if (done == 0) {
+                            System.out.println("Item Added");
+                        } else if (done == 1) {
+                            System.out.println("Item Added to Waitlist");
+                        } else {
+                            System.out.println("Unexpected Input");
+                        }
+                        break;
+                    }
+            }
+        }
+        warehouse.getInvoices(member);
+    }
+
+
+    public void editWishlist(Wishlist wishlist) {
+        boolean continueEditing = true;
+
+        while (continueEditing) {
+            System.out.println("Wishlist Options:");
+            System.out.println("1. Add item to wishlist");
+            System.out.println("2. Remove item from wishlist");
+            System.out.println("3. Change item quantity");
+            System.out.println("4. Exit wishlist editing");
+
+            int choice = getNumber("Enter your choice:");
+
+            String productName = getToken("Enter Product Name");
+            String memberName = getToken("Enter Member Name");
+            int quantity = getNumber("Enter Quantity");
+
+            Product product = warehouse.findProductByName(productName);
+            Member member = warehouse.findMemberByName(memberName);
+
+
+            switch (choice) {
+                case 1:
+                    Record newItem = new Record(product, member, quantity);
+                    warehouse.addToWishlist(member, newItem);
+                    System.out.println("Item added to wishlist.");
+                    break;
+
+                case 2:
+                    if (product != null && member != null) {
+                        Record record = new Record(product, member, quantity);
+                        boolean removed = warehouse.removeFromWishlist(member, record);
+
+                        if (removed) {
+                            System.out.println("Item removed from the wishlist.");
+                        } else {
+                            System.out.println("Item was not found on the wishlist.");
+                        }
+                    } else {
+                        System.out.println("Product or member not found.");
+                    }
+                    break;
+
+                case 3:
+
+                    if (product != null && member != null) {
+                        int newQuantity = getNumber("Enter the new quantity:");
+                        Record record = new Record(product, member, quantity);
+                        record.setQuantity(newQuantity);
+                        System.out.println("Item quantity changed.");
+                    } else {
+                        System.out.println("Item not found in the wishlist.");
+                    }
+                    break;
+
+                case 4:
+                    continueEditing = false;
+                    break;
+
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+                    break;
+            }
+        }
     }
 
     public void showWaitlist(){
-        Iterator allItems = warehouse.getWaitlist();
+        String name = getToken("Enter Product Name: ");
+        Product product = warehouse.findProductByName(name);
+        Iterator allItems = warehouse.getWaitlist(product);
         while (allItems.hasNext()){
             Item item = (Item)(allItems.next());
             System.out.println(item.toString());
         }
     }
-
 
     public void showProducts() {
         Iterator allProducts = warehouse.getProducts();
@@ -239,7 +357,7 @@ public class UserInterface {
 
         if (product != null && member != null) {
             Record record = new Record(product, member, quantity);
-            boolean added = warehouse.addToWishlist(record);
+            boolean added = warehouse.addToWishlist(member, record);
 
             if (added) {
                 System.out.println("Item added to the wishlist.");
@@ -261,7 +379,7 @@ public class UserInterface {
 
         if (product != null && member != null) {
             Record record = new Record(product, member, quantity);
-            boolean removed = warehouse.removeFromWishlist(record);
+            boolean removed = warehouse.removeFromWishlist(member, record);
 
             if (removed) {
                 System.out.println("Item removed from the wishlist.");
@@ -274,7 +392,9 @@ public class UserInterface {
     }
 
     public void showWishlist() {
-        Iterator allItems = warehouse.getWishlist();
+        String name = getToken("Enter Member Name: ");
+        Member member = warehouse.findMemberByName(name);
+        Iterator allItems = warehouse.getWishlist(member);
         while (allItems.hasNext()) {
             Record record = (Record) allItems.next();
             System.out.println(record.toString());
@@ -346,8 +466,7 @@ public class UserInterface {
         if (product != null && member != null) {
             //Item item = new Item(product, member, 0); // Quantity is not needed for removal
             Item item = new Item(product, member, quantity);
-            boolean removed = warehouse.removeItem(item);
-
+            boolean removed = warehouse.removeWaitItem(item, product);
             if (removed) {
                 System.out.println("Item removed from the waitlist.");
             } else {
@@ -358,124 +477,57 @@ public class UserInterface {
         }
     }
 
-    public void addToInvoices() {
-        String productName = getToken("Enter Product Name");
-        String memberName = getToken("Enter Member Name");
-        int quantity = getNumber("Enter Quantity");
+//    public void addToInvoices() {
+//        String productName = getToken("Enter Product Name");
+//        String memberName = getToken("Enter Member Name");
+//        int quantity = getNumber("Enter Quantity");
+//
+//        Product product = warehouse.findProductByName(productName);
+//        Member member = warehouse.findMemberByName(memberName);
+//
+//        if (product != null && member != null) {
+//            Invoice invoice = new Invoice(product, member, quantity);
+//            boolean added = warehouse.addToInvoices(invoice);
+//
+//            if (added) {
+//                System.out.println("Invoice added.");
+//            } else {
+//                System.out.println("Invoice could not be added.");
+//            }
+//        } else {
+//            System.out.println("Product or member not found.");
+//        }
+//    }
 
-        Product product = warehouse.findProductByName(productName);
-        Member member = warehouse.findMemberByName(memberName);
+//    public void removeFromInvoices() {
+//        String productName = getToken("Enter Product Name");
+//        String memberName = getToken("Enter Member Name");
+//        int quantity = getNumber("Enter Quantity");
+//
+//        Product product = warehouse.findProductByName(productName);
+//        Member member = warehouse.findMemberByName(memberName);
+//
+//        if (product != null && member != null) {
+//            Invoice invoice = new Invoice(product, member, quantity);
+//            boolean removed = warehouse.removeFromInvoices(invoice);
+//
+//            if (removed) {
+//                System.out.println("Invoice removed.");
+//            } else {
+//                System.out.println("Invoice was not found.");
+//            }
+//        } else {
+//            System.out.println("Product or member not found.");
+//        }
+//    }
 
-        if (product != null && member != null) {
-            Invoice invoice = new Invoice(product, member, quantity);
-            boolean added = warehouse.addToInvoices(invoice);
-
-            if (added) {
-                System.out.println("Invoice added.");
-            } else {
-                System.out.println("Invoice could not be added.");
-            }
-        } else {
-            System.out.println("Product or member not found.");
-        }
-    }
-
-    public void removeFromInvoices() {
-        String productName = getToken("Enter Product Name");
-        String memberName = getToken("Enter Member Name");
-        int quantity = getNumber("Enter Quantity");
-
-        Product product = warehouse.findProductByName(productName);
-        Member member = warehouse.findMemberByName(memberName);
-
-        if (product != null && member != null) {
-            Invoice invoice = new Invoice(product, member, quantity);
-            boolean removed = warehouse.removeFromInvoices(invoice);
-
-            if (removed) {
-                System.out.println("Invoice removed.");
-            } else {
-                System.out.println("Invoice was not found.");
-            }
-        } else {
-            System.out.println("Product or member not found.");
-        }
-    }
-
-    public void showInvoices() {
-        Iterator allInvoices = warehouse.getInvoices();
-        while (allInvoices.hasNext()) {
-            Invoice invoice = (Invoice) allInvoices.next();
-            System.out.println(invoice.toString());
-        }
-    }
-
-
-
-
-    public void editWishlist(Wishlist wishlist) {
-        boolean continueEditing = true;
-
-        while (continueEditing) {
-            System.out.println("Wishlist Options:");
-            System.out.println("1. Add item to wishlist");
-            System.out.println("2. Remove item from wishlist");
-            System.out.println("3. Change item quantity");
-            System.out.println("4. Exit wishlist editing");
-
-            int choice = getNumber("Enter your choice:");
-
-            String productName = getToken("Enter Product Name");
-            String memberName = getToken("Enter Member Name");
-            int quantity = getNumber("Enter Quantity");
-
-            Product product = warehouse.findProductByName(productName);
-            Member member = warehouse.findMemberByName(memberName);
-
-            switch (choice) {
-                case 1:
-                    Record newItem = new Record(product, member, quantity);
-                    wishlist.addToWishlist(newItem);
-                    System.out.println("Item added to wishlist.");
-                    break;
-
-                case 2:
-                    if (product != null && member != null) {
-                        Record record = new Record(product, member, quantity);
-                        boolean removed = warehouse.removeFromWishlist(record);
-
-                        if (removed) {
-                            System.out.println("Item removed from the wishlist.");
-                        } else {
-                            System.out.println("Item was not found on the wishlist.");
-                        }
-                    } else {
-                        System.out.println("Product or member not found.");
-                    }
-                    break;
-
-                case 3:
-
-                    if (product != null && member != null) {
-                        int newQuantity = getNumber("Enter the new quantity:");
-                        Record record = new Record(product, member, quantity);
-                        record.setQuantity(newQuantity);
-                        System.out.println("Item quantity changed.");
-                    } else {
-                        System.out.println("Item not found in the wishlist.");
-                    }
-                    break;
-
-                case 4:
-                    continueEditing = false;
-                    break;
-
-                default:
-                    System.out.println("Invalid choice. Please try again.");
-                    break;
-            }
-        }
-    }
+//    public void showInvoices() {
+//        Iterator allInvoices = warehouse.getInvoices();
+//        while (allInvoices.hasNext()) {
+//            Invoice invoice = (Invoice) allInvoices.next();
+//            System.out.println(invoice.toString());
+//        }
+//    }
 
 
     /*public void changeWishlistQuantity(Member member) {
@@ -510,6 +562,11 @@ public class UserInterface {
     public void processWaitlistHold() {
         System.out.println("Dummy Action");
     }
+
+    public void processShipment(){
+        System.out.println("Dummy Action");
+    }
+
     public void getTransactions() {
         System.out.println("Dummy Action");
     }
@@ -543,7 +600,7 @@ public class UserInterface {
                     break;
                 case ADD_PRODUCTS:         addProducts();
                     break;
-                case PURCHASE_PRODUCTS:       purchaseProducts(); //Dummy Action
+                case PURCHASE_PRODUCTS:       processOrder(); //Dummy Action
                     break;
                 case CHANGE_PRODUCT_QUANTITY:      changeProductQuantity();
                     break;
@@ -555,7 +612,7 @@ public class UserInterface {
                     break;
                 case PROCESS_WAITLIST:       processWaitlistHold(); //Dummy Action
                     break;
-                case GET_TRANSACTIONS:  getTransactions(); // Dummy Action
+                case PROCESS_SHIPMENT:  getTransactions();
                     break;
                 case SAVE:              save();
                     break;
@@ -566,8 +623,6 @@ public class UserInterface {
                 case SHOW_PRODUCTS:	showProducts();
                     break;
                 case SHOW_ITEMS: showWaitlist();
-                    break;
-                case SHOW_INVOICES: showInvoices();
                     break;
                 case ADD_TO_WISHLIST: addToWishlist();
                     break;

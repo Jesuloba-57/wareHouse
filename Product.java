@@ -8,12 +8,14 @@ public class Product implements Serializable {
     public String ProductName;
     public String id;
     public int Quantity;
+    private Waitlist waitlist;
 
 
     public Product(String ProductName, String id, int Quantity) {
         this.ProductName = ProductName;
         this.Quantity = Quantity;
         this.id = id;
+        this.waitlist = new Waitlist();
     }
 
     public int getQuantity() {
@@ -36,6 +38,15 @@ public class Product implements Serializable {
     }
     public void setId(String newId){
         id = newId;
+    }
+    public boolean addWait(Item item){
+        return waitlist.addToWaitlist(item);
+    }
+    public boolean removeWait(Item item){
+        return waitlist.removeFromWaitlist(item);
+    }
+    public Iterator getWaitlist(){
+        return waitlist.getItems();
     }
 
     public String toString() {

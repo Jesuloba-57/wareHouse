@@ -24,10 +24,10 @@ public class Waitlist implements Serializable {
         return true;
     }
 
-    /*public boolean removeFromWaitlist(Item item){
-        items.remove(item);
-        return true;
-    }*/
+//    public boolean removeFromWaitlist(Item item){
+//        items.remove(item);
+//        return true;
+//    }
 
     public boolean removeFromWaitlist(Item item) {
         System.out.println("Items before removal: " + items);

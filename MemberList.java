@@ -24,6 +24,19 @@ public class MemberList implements Serializable {
         return members.iterator();
     }
 
+    public Member findMember(String target){
+        Iterator iterator = members.iterator();
+
+        while (iterator.hasNext()) {
+            Member member = (Member)iterator.next();
+            if (member.getName().equalsIgnoreCase(target)) {
+                return member;
+            }
+        }
+        return null;
+    }
+
+
     private void writeObject(java.io.ObjectOutputStream output) {
         try {
             output.defaultWriteObject();

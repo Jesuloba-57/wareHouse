@@ -8,6 +8,7 @@ public class Member implements Serializable{
     private String address;
     private String phone;
     private Wishlist wishlist;
+    private InvoiceList invoice;
 
 
     public Member (String id, String name, String address, String phone){
@@ -16,6 +17,7 @@ public class Member implements Serializable{
         this.address = address;
         this.phone = phone;
         this.wishlist = new Wishlist();
+        this.invoice = new InvoiceList();
 
     }
 
@@ -34,6 +36,25 @@ public class Member implements Serializable{
 
     public Wishlist getWishlist() {
         return wishlist;
+    }
+    public boolean addwish(Record rec){
+        return wishlist.addToWishlist(rec);
+    }
+    public Iterator getInvoice(){
+        return invoice.getInvoices();
+    }
+    public boolean removeFromInvoice(Record rec){
+        return invoice.removeFromInvoices(rec);
+    }
+    public boolean addtoInvoice(Record rec){
+        return invoice.addToInvoices(rec);
+    }
+    public boolean removeWish(Record record){
+        return wishlist.removeFromWishlist(record);
+    }
+
+    public Iterator getWish(){
+        return wishlist.getWishlist();
     }
 
     public void setName(String newName) {

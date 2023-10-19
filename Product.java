@@ -33,6 +33,9 @@ public class Product implements Serializable {
     public void setQuantity(int newQuantity){
         Quantity = newQuantity;
     }
+    public void addQuantity(int newQuantity){
+        Quantity = Quantity + newQuantity;
+    }
     public void setProductName(String newProductName){
         ProductName = newProductName;
     }

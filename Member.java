@@ -34,9 +34,6 @@ public class Member implements Serializable{
         return id;
     }
 
-    public Wishlist getWishlist() {
-        return wishlist;
-    }
     public boolean addwish(Record rec){
         return wishlist.addToWishlist(rec);
     }

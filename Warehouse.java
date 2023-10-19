@@ -104,8 +104,10 @@ public class Warehouse implements Serializable{
 
     public Item addWaitItem(Product product, Member member, int quantity){
         Item item = new Item(product, member, quantity);
-        if (product.addWait(item)){
-            return (item);
+        if (product != null ) {
+            if (product.addWait(item)) {
+                return (item);
+            }
         }
         return null;
     }
@@ -130,11 +132,14 @@ public class Warehouse implements Serializable{
     public int addToInvoices(Record wish, Member member) {
         Product p = wish.getProduct();
         if(p.getQuantity() >= wish.getQuantity()){
+            int quantity = p.getQuantity() - wish.getQuantity();
+            p.setQuantity(quantity);
             member.addtoInvoice(wish);
             return 0;
         }
         else{
-            int quantity = p.getQuantity() - wish.getQuantity();
+            int quantity = wish.getQuantity() - p.getQuantity();
+            p.setQuantity(0);
             Item wait = new Item(p, member, quantity);
             p.addWait(wait);
             return 1;
@@ -156,6 +161,20 @@ public class Warehouse implements Serializable{
     }
     public Iterator getWaitlist(Product product){
         return product.getWaitlist();
+    }
+    public Iterator processShipment(Shipment shipment){
+        Product product = shipment.getProduct();
+        Iterator waitlist = product.getWaitlist();
+        return waitlist;
+    }
+
+    public boolean allocate(Shipment shipment, int quantity){
+        if (shipment.allocate(quantity)){
+            Product product = shipment.getProduct();
+            product.addQuantity(quantity);
+            return true;
+        }
+        return false;
     }
 
     public static Warehouse retrieve() {

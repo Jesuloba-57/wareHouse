@@ -5,9 +5,6 @@ public class InvoiceList implements Serializable {
     private List<Record> invoices = new LinkedList();
     private static InvoiceList invoiceList;
 
-//    private InvoiceList() {
-//    }
-
     public static InvoiceList instance() {
         if (invoiceList == null) {
             return (invoiceList = new InvoiceList());

@@ -16,4 +16,16 @@ public class Shipment implements Serializable {
     public int getQuantity() {
         return quantity;
     }
+
+    public boolean allocate(int subtract){
+        if (quantity >= subtract){
+            quantity = quantity - subtract;
+            return true;
+        }
+        return false;
+    }
+
+    public String toString() {
+        return "Product Name: " + product.getProductName() + " Quantity: " + getQuantity();
+    }
 }

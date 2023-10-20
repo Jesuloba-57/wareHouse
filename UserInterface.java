@@ -627,8 +627,13 @@ public class UserInterface {
                         }
                 }
             }
-        }
-        else{
+        } else if (product.isEmpty() && product != null) {
+            Shipment ship = new Shipment(product, quantity);
+            System.out.println("Waitlist is Currently Empty");
+            System.out.println(ship.toString() + " has been added to catalog");
+            warehouse.allocate(ship, quantity);
+
+        } else{
             System.out.println("Waitlist is Currently Empty");
         }
     }

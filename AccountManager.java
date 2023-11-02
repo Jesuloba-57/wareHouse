@@ -26,5 +26,23 @@ public class AccountManager {
         return user != null && user.getPassword().equals(password);
     }
 
+    public void createNewUser(String username, String password, String accountType) {
+        // Check if the username is unique (not already in use)
+        if (getUserByUsername(username) == null) {
+            UserAccount newUser = new UserAccount(username, password, accountType);
+            addUser(newUser);
+            System.out.println("User created successfully.");
+        } else {
+            System.out.println("Username is already in use. Please choose a different username.");
+        }
+    }
 
+    public String getUserRole(String username) {
+        UserAccount user = getUserByUsername(username);
+        if (user != null) {
+            return user.getAccountType();
+        }
+        return "Unknown"; // User not found
+    }
 }
+

@@ -2,7 +2,6 @@ import java.util.*;
 import java.text.*;
 import java.util.*;
 import java.io.*;
-import java.util.Scanner;
 
 public class UserInterface {
     private static UserInterface userInterface;
@@ -655,25 +654,65 @@ public class UserInterface {
     }
     public static void main(String[] s) {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("1. Login");
-        System.out.println("2. Create new User");
-        int choice = scanner.nextInt();
-        switch(choice){
-            case 1:
-                System.out.println("Enter Username: ");
-                String name = scanner.nextLine();
-                System.out.println("Enter password: ");
-                String password = scanner.nextLine();
+        AccountManager accountManager = new AccountManager();
 
+        boolean running = true;
 
-                break;
+        while (running) {
+            System.out.println("1. Login");
+            System.out.println("2. Create new User");
+            System.out.println("3. Quit");
+            int choice = scanner.nextInt();
 
-            case 2:
-                System.out.println("Enter Username: ");
+            switch(choice){
+                case 1:
+                    System.out.println("Enter Username: ");
+                    String username = scanner.nextLine();
+                    scanner.nextLine();
+                    
+                    System.out.println("Enter password: ");
+                    String password = scanner.nextLine();
 
+                    boolean isAuthenticated = accountManager.authenticateUser(username, password);
 
-        //UserInterface.instance().process();
+                    if (isAuthenticated) {
+                        String userRole = accountManager.getUserRole(username);
+                        System.out.println(userRole + "Authenticated");
+                    } else {
+                        System.out.println("Authentication failed. Please check your username and password.");
+                    }
+
+                    break;
+
+                case 2:
+                    System.out.println("Enter Username: ");
+                    String newUsername = scanner.nextLine();
+                    scanner.nextLine();
+
+                    System.out.println("Enter Password: ");
+                    String newPassword = scanner.nextLine();
+                    
+
+                    System.out.println("Enter Account Type (Manager/Client/Sales Clerk): ");
+                    String accountType = scanner.nextLine();
+                    
+                    
+                    accountManager.createNewUser(newUsername, newPassword, accountType);
+                    break;
+
+                case 3:
+                    running = false;
+                    break;
+
+                    default:
+                    System.out.println("Invalid choice");
+            //UserInterface.instance().process();
+        }
+
+       //System.out.println("Thank you for using the system.");
+        
     }
+}
 }
 
 

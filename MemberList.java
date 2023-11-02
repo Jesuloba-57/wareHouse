@@ -66,10 +66,4 @@ public class MemberList implements Serializable {
     public String toString() {
         return members.toString();
     }
-
-
-
-
-
-
 }

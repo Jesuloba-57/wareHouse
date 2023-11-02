@@ -654,7 +654,7 @@ public class UserInterface {
     }
     public static void main(String[] s) {
         Scanner scanner = new Scanner(System.in);
-        AccountManager accountManager = new AccountManager();
+        AccountManager accountManager = new AccountManager(); 
 
         boolean running = true;
 
@@ -677,7 +677,7 @@ public class UserInterface {
 
                     if (isAuthenticated) {
                         String userRole = accountManager.getUserRole(username);
-                        System.out.println(userRole + "Authenticated");
+                        System.out.println(userRole + " Authenticated");
                     } else {
                         System.out.println("Authentication failed. Please check your username and password.");
                     }
@@ -722,7 +722,7 @@ public class UserInterface {
             //UserInterface.instance().process();
         }
 
-       //System.out.println("Thank you for using the system.");
+       System.out.println("Thank you for using the system.");
         
     }
 }

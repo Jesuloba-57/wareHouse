@@ -37,6 +37,12 @@ public class AccountManager {
         }
     }
 
+    public boolean isValidAccountType(String accountType) {
+        return accountType.equalsIgnoreCase("Manager")
+                || accountType.equalsIgnoreCase("Client")
+                || accountType.equalsIgnoreCase("Sales Clerk");
+    }
+
     public String getUserRole(String username) {
         UserAccount user = getUserByUsername(username);
         if (user != null) {
@@ -45,4 +51,6 @@ public class AccountManager {
         return "Unknown"; // User not found
     }
 }
+
+
 

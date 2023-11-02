@@ -669,7 +669,7 @@ public class UserInterface {
                     System.out.println("Enter Username: ");
                     String username = scanner.nextLine();
                     scanner.nextLine();
-                    
+
                     System.out.println("Enter password: ");
                     String password = scanner.nextLine();
 
@@ -691,13 +691,26 @@ public class UserInterface {
 
                     System.out.println("Enter Password: ");
                     String newPassword = scanner.nextLine();
+
+                    System.out.println("Re-enter Password: ");
+                    String confirmPassword = scanner.nextLine();
                     
 
-                    System.out.println("Enter Account Type (Manager/Client/Sales Clerk): ");
-                    String accountType = scanner.nextLine();
-                    
-                    
-                    accountManager.createNewUser(newUsername, newPassword, accountType);
+                    if (!newPassword.equals(confirmPassword)) {
+                        System.out.println("Passwords do not match. User creation failed.");
+                    } else {
+                        System.out.println("Enter Account Type (Manager/Client/Sales Clerk): ");
+                        String accountType = scanner.nextLine();
+                        
+                        if(accountManager.isValidAccountType(accountType))
+                        {
+                            accountManager.createNewUser(newUsername, newPassword, accountType);
+                            System.out.println("User created successfully.");
+                        }else{
+                            System.out.println("Invalid Account Type");
+                        }
+                    }
+
                     break;
 
                 case 3:

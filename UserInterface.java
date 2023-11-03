@@ -678,6 +678,25 @@ public class UserInterface {
                     if (isAuthenticated) {
                         String userRole = accountManager.getUserRole(username);
                         System.out.println(userRole + " Authenticated");
+
+                        // Handle different states based on account type
+                        switch (userRole) {
+                        case "Manager":
+                            // Manager-specific code or state
+                            System.out.println(userRole + " State");
+                            break;
+                        case "Client":
+                            // Client-specific code or state
+                            System.out.println(userRole + " State");
+                            break;
+                        case "Sales Clerk":
+                            // Sales Clerk-specific code or state
+                            System.out.println(userRole + " State");
+                            break;
+                        default:
+                            // Handle unknown account type
+                            break;
+                    }
                     } else {
                         System.out.println("Authentication failed. Please check your username and password.");
                     }

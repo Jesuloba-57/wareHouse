@@ -3,6 +3,7 @@ import java.util.List;
 
 public class AccountManager {
     private List<UserAccount> userAccounts;
+    private UserAccount loggedInUser;
 
     public AccountManager() {
         userAccounts = new ArrayList<>();
@@ -10,6 +11,14 @@ public class AccountManager {
 
     public void addUser(UserAccount user) {
         userAccounts.add(user);
+    }
+
+    public UserAccount getLoggedInUser() {
+        return loggedInUser;
+    }
+
+    public void setLoggedInUser(UserAccount user) {
+        loggedInUser = user;
     }
 
     public UserAccount getUserByUsername(String username) {
@@ -50,6 +59,8 @@ public class AccountManager {
         }
         return "Unknown"; // User not found
     }
+
+
 }
 
 
